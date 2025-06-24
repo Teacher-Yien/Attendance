@@ -1,5 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+// import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
+import NavLink from '@/Components/NavLink.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -62,11 +66,11 @@ const isActivePage = (pageKey) => {
                 <!-- Logo/Header -->
                 <div class="flex items-center p-6 border-b">
                     <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-white font-bold text-lg">A</span>
+                        <img src="../assets/php.png" alt="">
                     </div>
                     <div>
                         <h1 class="text-lg font-semibold text-gray-800">
-                            របប់គ្រប់គ្រងវត្តមាន
+                            គ្រប់គ្រងវត្តមាន
                         </h1>
                         <p class="text-sm text-gray-600">Attendance Management System</p>
                     </div>
@@ -123,10 +127,55 @@ const isActivePage = (pageKey) => {
                             <span v-else-if="activePage === 'students'">និស្សិត (Students)</span>
                             <span v-else-if="activePage === 'reports'">របាយការណ៍ (Reports)</span>
                         </h1>
-                        <div class="flex items-center space-x-4">
+                        <div class="flex items-center ">
                             <!-- User Avatar -->
-                            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
-                            <div class="w-8 h-8 bg-gray-400 rounded-full"></div>
+                            <div class="  rounded-full">
+                                <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                             <!-- Settings Dropdown  -->
+                                    <div class="relative ms-3">
+                                        <Dropdown align="right" width="48">
+                                            <template #trigger>
+                                                <span class="inline-flex rounded-md">
+                                                    <button
+                                                        type="button"
+                                                        class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                    >
+                                                        {{ $page.props.auth.user.name }}
+
+                                                        <svg
+                                                            class="-me-0.5 ms-2 h-4 w-4"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                        >
+                                                            <path
+                                                                fill-rule="evenodd"
+                                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                                clip-rule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                </span>
+                                            </template>
+
+                                            <template #content>
+                                                <DropdownLink
+                                                    :href="route('profile.edit')"
+                                                >
+                                                    Profile
+                                                </DropdownLink>
+                                                <DropdownLink
+                                                    :href="route('logout')"
+                                                    method="post"
+                                                    as="button"
+                                                >
+                                                    Log Out
+                                                </DropdownLink>
+                                            </template>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </header>
