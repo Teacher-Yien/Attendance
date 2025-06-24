@@ -1,7 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 // Sample data - replace with actual props or API calls
@@ -11,32 +10,46 @@ const stats = ref({
     absent: 5
 });
 
+// Current active page
+const activePage = ref('dashboard');
+
+// Sample student data
+const students = ref([
+    { id: 1, name: 'សុខ វិចិត្រ', class: 'Grade 10A', status: 'Present' },
+    { id: 2, name: 'ចន្ទ សុភា', class: 'Grade 10A', status: 'Absent' },
+    { id: 3, name: 'ពិរុណ សុវណ្ណ', class: 'Grade 10B', status: 'Late' },
+    { id: 4, name: 'សុវណ្ណ មករា', class: 'Grade 10B', status: 'Present' },
+    { id: 5, name: 'រដ្ឋា កញ្ញា', class: 'Grade 11A', status: 'Present' }
+]);
+
 // Navigation links
 const navigationLinks = [
     {
         name: 'ទំព័រដើម',
-        href: '/dashboard',
-        icon: 'dashboard',
-        active: true
+        key: 'dashboard',
+        icon: 'dashboard'
     },
     {
         name: 'និស្សិត',
-        href: '/students',
-        icon: 'students',
-        active: false
+        key: 'students',
+        icon: 'students'
     },
     {
         name: 'របាយការណ៍',
-        href: '#',
-        icon: 'reports',
-        active: false
+        key: 'reports',
+        icon: 'reports'
     }
 ];
 
-// Helper function to get current route
-const currentRoute = computed(() => {
-    return window.location.pathname;
-});
+// Function to change active page
+const setActivePage = (pageKey) => {
+    activePage.value = pageKey;
+};
+
+// Helper function to check if page is active
+const isActivePage = (pageKey) => {
+    return activePage.value === pageKey;
+};
 </script>
 
 <template>
@@ -69,11 +82,11 @@ const currentRoute = computed(() => {
                     
                     <!-- Navigation Links -->
                     <template v-for="link in navigationLinks" :key="link.name">
-                        <Link 
-                            :href="link.href" 
+                        <button 
+                            @click="setActivePage(link.key)"
                             :class="[
-                                'flex items-center px-6 py-3',
-                                currentRoute === link.href 
+                                'flex items-center px-6 py-3 w-full text-left transition-colors duration-200',
+                                isActivePage(link.key) 
                                     ? 'text-gray-700 bg-gray-100 border-r-4 border-red-600' 
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                             ]"
@@ -95,7 +108,7 @@ const currentRoute = computed(() => {
                             </svg>
                             
                             {{ link.name }}
-                        </Link>
+                        </button>
                     </template>
                 </nav>
             </div>
@@ -105,7 +118,11 @@ const currentRoute = computed(() => {
                 <!-- Top Header -->
                 <header class="bg-white shadow-sm border-b px-6 py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-2xl font-semibold text-gray-800">Dashboard</h1>
+                        <h1 class="text-2xl font-semibold text-gray-800">
+                            <span v-if="activePage === 'dashboard'">Dashboard</span>
+                            <span v-else-if="activePage === 'students'">និស្សិត (Students)</span>
+                            <span v-else-if="activePage === 'reports'">របាយការណ៍ (Reports)</span>
+                        </h1>
                         <div class="flex items-center space-x-4">
                             <!-- User Avatar -->
                             <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
