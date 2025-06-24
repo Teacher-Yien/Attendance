@@ -1,0 +1,171 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+
+// Sample data - replace with actual props or API calls
+const stats = ref({
+    present: 10,
+    late: 30,
+    absent: 5
+});
+
+// Navigation links
+const navigationLinks = [
+    {
+        name: 'ទំព័រដើម',
+        href: '/dashboard',
+        icon: 'dashboard',
+        active: true
+    },
+    {
+        name: 'និស្សិត',
+        href: '/students',
+        icon: 'students',
+        active: false
+    },
+    {
+        name: 'របាយការណ៍',
+        href: '#',
+        icon: 'reports',
+        active: false
+    }
+];
+
+// Helper function to get current route
+const currentRoute = computed(() => {
+    return window.location.pathname;
+});
+</script>
+
+<template>
+    <Head title="Dashboard" />
+
+    <AuthenticatedLayout>
+        <div class="flex min-h-screen bg-gray-100">
+            <!-- Sidebar -->
+            <div class="w-64 bg-white shadow-lg">
+                <!-- Logo/Header -->
+                <div class="flex items-center p-6 border-b">
+                    <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white font-bold text-lg">A</span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-800">
+                            របប់គ្រប់គ្រងវត្តមាន
+                        </h1>
+                        <p class="text-sm text-gray-600">Attendance Management System</p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="mt-6">
+                    <div class="px-6">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                            បញ្ជីថ្ងៃ
+                        </p>
+                    </div>
+                    
+                    <!-- Navigation Links -->
+                    <template v-for="link in navigationLinks" :key="link.name">
+                        <Link 
+                            :href="link.href" 
+                            :class="[
+                                'flex items-center px-6 py-3',
+                                currentRoute === link.href 
+                                    ? 'text-gray-700 bg-gray-100 border-r-4 border-red-600' 
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                            ]"
+                        >
+                            <!-- Dashboard Icon -->
+                            <svg v-if="link.icon === 'dashboard'" class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                            </svg>
+                            
+                            <!-- Students Icon -->
+                            <svg v-else-if="link.icon === 'students'" class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.25 2.524 1 1 0 01-1.5 0z"/>
+                            </svg>
+                            
+                            <!-- Reports Icon -->
+                            <svg v-else-if="link.icon === 'reports'" class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                            </svg>
+                            
+                            {{ link.name }}
+                        </Link>
+                    </template>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <!-- Top Header -->
+                <header class="bg-white shadow-sm border-b px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-2xl font-semibold text-gray-800">Dashboard</h1>
+                        <div class="flex items-center space-x-4">
+                            <!-- User Avatar -->
+                            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                            <div class="w-8 h-8 bg-gray-400 rounded-full"></div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Dashboard Content -->
+                <main class="p-6">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- Present Card -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="text-center">
+                                <h3 class="text-lg font-medium text-gray-600 mb-2">
+                                    ចំនួនមកវត្តមាន
+                                </h3>
+                                <div class="text-4xl font-bold text-gray-800 mb-1">
+                                    {{ stats.present }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Late Card -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="text-center">
+                                <h3 class="text-lg font-medium text-gray-600 mb-2">
+                                    ចំនួនមកយឺត
+                                </h3>
+                                <div class="text-4xl font-bold text-orange-500 mb-1">
+                                    {{ stats.late }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Absent Card -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="text-center">
+                                <h3 class="text-lg font-medium text-gray-600 mb-2">
+                                    ចំនួនអវត្តមាន
+                                </h3>
+                                <div class="text-4xl font-bold text-red-500 mb-1">
+                                    {{ stats.absent }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Content Area -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                            Recent Activity
+                        </h2>
+                        <div class="text-gray-600">
+                            <p>Additional dashboard content can be added here...</p>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>
