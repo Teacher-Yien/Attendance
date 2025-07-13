@@ -23,6 +23,11 @@ Route::get('/students', function () {
     return Inertia::render('Students');
 })->middleware(['auth', 'verified'])->name('students');
 
+// Report route - add this
+Route::get('/reports', function () {
+    return Inertia::render('Reports');
+})->middleware(['auth', 'verified'])->name('reports');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

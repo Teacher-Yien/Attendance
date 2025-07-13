@@ -1,11 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-// import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import Students from './Students.vue';
+import Reports from './Reports.vue';
 
 // Sample data - replace with actual props or API calls
 const stats = ref({
@@ -14,46 +15,44 @@ const stats = ref({
     absent: 5
 });
 
-// Current active page
-const activePage = ref('dashboard');
 
-// Sample student data
-const students = ref([
-    { id: 1, name: 'សុខ វិចិត្រ', class: 'Grade 10A', status: 'Present' },
-    { id: 2, name: 'ចន្ទ សុភា', class: 'Grade 10A', status: 'Absent' },
-    { id: 3, name: 'ពិរុណ សុវណ្ណ', class: 'Grade 10B', status: 'Late' },
-    { id: 4, name: 'សុវណ្ណ មករា', class: 'Grade 10B', status: 'Present' },
-    { id: 5, name: 'រដ្ឋា កញ្ញា', class: 'Grade 11A', status: 'Present' }
-]);
 
 // Navigation links
 const navigationLinks = [
     {
         name: 'ទំព័រដើម',
         key: 'dashboard',
-        icon: 'dashboard'
+        icon: 'dashboard',
+        route: 'dashboard'
     },
     {
         name: 'និស្សិត',
         key: 'students',
-        icon: 'students'
+        icon: 'students',
+        route: 'students'
     },
     {
         name: 'របាយការណ៍',
         key: 'reports',
-        icon: 'reports'
+        icon: 'reports',
+        route: 'reports'
     }
 ];
 
-// Function to change active page
-const setActivePage = (pageKey) => {
-    activePage.value = pageKey;
-};
-
-// Helper function to check if page is active
-const isActivePage = (pageKey) => {
-    return activePage.value === pageKey;
-};
+// Get current route name for active state
+const getCurrentPageTitle = computed(() => {
+    const currentRoute = route().current();
+    switch(currentRoute) {
+        case 'dashboard':
+            return 'Dashboard';
+        case 'students':
+            return 'និស្សិត (Students)';
+        case 'reports':
+            return 'របាយការណ៍ (Reports)';
+        default:
+            return 'Dashboard';
+    }
+});
 </script>
 
 <template>
@@ -86,14 +85,14 @@ const isActivePage = (pageKey) => {
                     
                     <!-- Navigation Links -->
                     <template v-for="link in navigationLinks" :key="link.name">
-                        <button 
-                            @click="setActivePage(link.key)"
-                            :class="[
-                                'flex items-center px-6 py-3 w-full text-left transition-colors duration-200',
-                                isActivePage(link.key) 
-                                    ? 'text-gray-700 bg-gray-100 border-r-4 border-red-600' 
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                            ]"
+                        <NavLink 
+                            :href="route(link.route)"
+                            :active="route().current(link.route)"
+                            class="flex items-center px-6 py-3 w-full text-left transition-colors duration-200 no-underline"
+                            :class="{
+                                'text-gray-700 bg-gray-100 border-r-4 border-red-600': route().current(link.route),
+                                'text-gray-600 hover:bg-gray-50 hover:text-gray-700': !route().current(link.route)
+                            }"
                         >
                             <!-- Dashboard Icon -->
                             <svg v-if="link.icon === 'dashboard'" class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -112,7 +111,7 @@ const isActivePage = (pageKey) => {
                             </svg>
                             
                             {{ link.name }}
-                        </button>
+                        </NavLink>
                     </template>
                 </nav>
             </div>
@@ -123,15 +122,13 @@ const isActivePage = (pageKey) => {
                 <header class="bg-white shadow-sm border-b px-6 py-4">
                     <div class="flex items-center justify-between">
                         <h1 class="text-2xl font-semibold text-gray-800">
-                            <span v-if="activePage === 'dashboard'">Dashboard</span>
-                            <span v-else-if="activePage === 'students'">និស្សិត (Students)</span>
-                            <span v-else-if="activePage === 'reports'">របាយការណ៍ (Reports)</span>
+                            {{ getCurrentPageTitle }}
                         </h1>
-                        <div class="flex items-center ">
+                        <div class="flex items-center">
                             <!-- User Avatar -->
-                            <div class="  rounded-full">
+                            <div class="rounded-full">
                                 <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                             <!-- Settings Dropdown  -->
+                                    <!-- Settings Dropdown -->
                                     <div class="relative ms-3">
                                         <Dropdown align="right" width="48">
                                             <template #trigger>
@@ -159,9 +156,7 @@ const isActivePage = (pageKey) => {
                                             </template>
 
                                             <template #content>
-                                                <DropdownLink
-                                                    :href="route('profile.edit')"
-                                                >
+                                                <DropdownLink :href="route('profile.edit')">
                                                     Profile
                                                 </DropdownLink>
                                                 <DropdownLink
@@ -221,13 +216,26 @@ const isActivePage = (pageKey) => {
                         </div>
                     </div>
 
-                    <!-- Additional Content Area -->
+                    <!-- Content Area Based on Current Route -->
                     <div class="bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                            Recent Activity
-                        </h2>
-                        <div class="text-gray-600">
-                            <p>Additional dashboard content can be added here...</p>
+                        <!-- Dashboard Content -->
+                        <div v-if="route().current('dashboard')">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                                Recent Activity
+                            </h2>
+                            <div class="text-gray-600">
+                                <p>Welcome to the attendance management dashboard.</p>
+                            </div>
+                        </div>
+
+                        <!-- Students Content -->
+                        <div v-else-if="route().current('students')">
+                            <Students/>
+                        </div>
+
+                        <!-- Reports Content -->
+                        <div v-else-if="route().current('reports')">
+                            <Reports/>
                         </div>
                     </div>
                 </main>
